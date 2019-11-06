@@ -2,21 +2,29 @@ package com.example.catalogueapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.catalogueapp.database.Product;
+import com.squareup.picasso.Picasso;
 
+import java.net.URL;
 import java.util.List;
 
+import static java.security.AccessController.getContext;
 
-public class ProductCatalogueAdapter extends RecyclerView.Adapter {
+
+public class BusinessCatalogueAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
@@ -30,7 +38,12 @@ public class ProductCatalogueAdapter extends RecyclerView.Adapter {
         ProductViewHolder pHolder = (ProductViewHolder)holder;
         if( products != null ){
             Product p = products.get(position);
+            Picasso.get()
+                    .load(p.image)
+                    .into(pHolder.productImage);
             pHolder.productName.setText(p.name);
+            pHolder.productRating.setRating(p.ranking);
+
         }else{
             pHolder.productName.setText("Producto no encontrado");
         }
@@ -46,11 +59,15 @@ public class ProductCatalogueAdapter extends RecyclerView.Adapter {
 
     class ProductViewHolder extends RecyclerView.ViewHolder{
         private TextView productName;
+        private ImageView productImage;
+        private  RatingBar productRating;
 
         public ProductViewHolder(View itemView){
             super(itemView);
             // change this!
             productName = itemView.findViewById(R.id.recyclerCompanyName);
+            productImage = itemView.findViewById(R.id.recyclerCompanyThumbnail);
+            productRating = itemView.findViewById(R.id.recyclerCompanyRating);
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -65,7 +82,7 @@ public class ProductCatalogueAdapter extends RecyclerView.Adapter {
     private List<Product> products;
 
     MainActivity callTo;
-    public ProductCatalogueAdapter(MainActivity context){
+    public BusinessCatalogueAdapter(MainActivity context){
         inflater = LayoutInflater.from(context);
         callTo = context;
     }

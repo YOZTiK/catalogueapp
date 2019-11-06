@@ -2,27 +2,22 @@ package com.example.catalogueapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.catalogueapp.database.CatalogueDatabase;
 import com.example.catalogueapp.database.DatabaseReceiver;
-import com.example.catalogueapp.database.DatabaseTask;
 import com.example.catalogueapp.database.Product;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DatabaseReceiver {
@@ -30,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements DatabaseReceiver 
     public static String MESSAGE = "com.example.catalogueApp.MainActivity";
     ProductViewModel products;
     public List<Product> resultProducts;
-    ProductCatalogueAdapter adapter;
+    BusinessCatalogueAdapter adapter;
+    public String src;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +36,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseReceiver 
         products = ViewModelProviders.of(this).get(ProductViewModel.class);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        adapter = new ProductCatalogueAdapter(this);
+        adapter = new BusinessCatalogueAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Intent timerToast = new Intent(getApplicationContext(), service.class);
+        getApplicationContext().startService(timerToast);
 
         /*
         products.getProducts(getApplicationContext()).observe(this, new Observer<List<Product>>() {
@@ -52,6 +51,22 @@ public class MainActivity extends AppCompatActivity implements DatabaseReceiver 
                 getAll(products);
             }
         });*/
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        products.searchProducts(getApplicationContext(), src).observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> products) {
+                //getAll(products);
+                Log.d("SET resultProducts", "FOUND: " + products);
+                resultProducts = products;
+
+                adapter.setProducts(products);
+//                Log.d("Changed HERE!!!", "ENTERED: " + products);
+            }
+        });
     }
 
     public void getAll(List<Product> products) {
@@ -70,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseReceiver 
     }
 
     public void doAction(View view) {
-        String src = "%" + ((EditText) findViewById(R.id.searchText)).getText() + "%";
+        src = "%" + ((EditText) findViewById(R.id.searchText)).getText() + "%";
         Log.d("SEARCH STRING!!!", "ENTERED: " + src);
         products.searchProducts(getApplicationContext(), src).observe(this, new Observer<List<Product>>() {
             @Override
@@ -107,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements DatabaseReceiver 
     }
 
     public void goToNextScreen(final int adapterPosition) {
-
         Intent i = new Intent(this, DetailActivity.class);
 
         //Log.d("RESULT PRODUCTS!!!", "RESULT OF SEARCH: " + resultProducts);

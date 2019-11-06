@@ -30,18 +30,13 @@ public class VolleyActivity extends AppCompatActivity {
         getJsonRequest();
     }
 
-    public void goBackToList(View view) {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-    }
-
     public void getJsonRequest() {
         Log.d("getJsonRequest", "Started");
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
-//        String url = "http://10.0.2.2:8000";
-        String url = "http://192.168.1.72:8000";
+        String url = "http://10.0.2.2:8000";
+//        String url = "http://192.168.1.72:8000";
 
         Log.d("URL to connect with node", "String: "+url);
         final DatabaseTask databaseTask = new DatabaseTask(getApplicationContext(), null);

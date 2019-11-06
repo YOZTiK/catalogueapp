@@ -2,11 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:weightSum="3"
+    android:background="@color/colorButton">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dip"
+            android:layout_weight="1"
+            android:scaleType="fitXY"
+            android:layout_gravity="start"
+            android:id="@+id/recyclerCompanyThumbnail" />
 
         <TextView
             style="@style/company_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:id="@+id/recyclerCompanyName"/>
+
+        <RatingBar
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_weight="0"
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:rating="0.0"
+            android:id="@+id/recyclerCompanyRating" />
+
 </LinearLayout>
